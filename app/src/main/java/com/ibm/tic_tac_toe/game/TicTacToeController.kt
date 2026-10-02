@@ -12,12 +12,15 @@ import androidx.compose.runtime.setValue
  * [androidx.compose.runtime.State] so a composable can `remember` an instance and
  * recompose automatically on every move.
  */
-class TicTacToeController {
+class TicTacToeController(
+    initialGameState: GameState = GameState(),
+    initialScoreBoard: ScoreBoard = ScoreBoard()
+) {
 
-    var gameState: GameState by mutableStateOf(GameState())
+    var gameState: GameState by mutableStateOf(initialGameState)
         private set
 
-    var scoreBoard: ScoreBoard by mutableStateOf(ScoreBoard())
+    var scoreBoard: ScoreBoard by mutableStateOf(initialScoreBoard)
         private set
 
     /** Places the current player's mark at [index], ignoring the click if it's not legal. */
