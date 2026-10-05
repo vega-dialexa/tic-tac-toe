@@ -3,7 +3,9 @@ package com.ibm.tic_tac_toe.persistence
 import com.ibm.tic_tac_toe.game.GameState
 import com.ibm.tic_tac_toe.game.Player
 import com.ibm.tic_tac_toe.game.ScoreBoard
+import com.ibm.tic_tac_toe.settings.AppSettings
 import com.ibm.tic_tac_toe.settings.PlayerSettings
+import com.ibm.tic_tac_toe.settings.ThemePreference
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -16,6 +18,7 @@ class GameStateRepositoryTest {
         assertEquals(GameState(), repository.loadGameState())
         assertEquals(ScoreBoard(), repository.loadScoreBoard())
         assertEquals(PlayerSettings(), repository.loadPlayerSettings())
+        assertEquals(AppSettings(), repository.loadAppSettings())
     }
 
     @Test
@@ -89,5 +92,25 @@ class GameStateRepositoryTest {
         repository.savePlayerSettings(settings)
 
         assertEquals(settings, repository.loadPlayerSettings())
+    }
+
+    @Test
+    fun `round-trips a muted, dark-theme app settings`() {
+        val repository = GameStateRepository(FakeKeyValueStore())
+        val settings = AppSettings(isMuted = true, themePreference = ThemePreference.DARK)
+
+        repository.saveAppSettings(settings)
+
+        assertEquals(settings, repository.loadAppSettings())
+    }
+
+    @Test
+    fun `round-trips an unmuted, light-theme app settings`() {
+        val repository = GameStateRepository(FakeKeyValueStore())
+        val settings = AppSettings(isMuted = false, themePreference = ThemePreference.LIGHT)
+
+        repository.saveAppSettings(settings)
+
+        assertEquals(settings, repository.loadAppSettings())
     }
 }

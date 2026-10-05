@@ -3,7 +3,9 @@ package com.ibm.tic_tac_toe.persistence
 import com.ibm.tic_tac_toe.game.GameState
 import com.ibm.tic_tac_toe.game.Player
 import com.ibm.tic_tac_toe.game.ScoreBoard
+import com.ibm.tic_tac_toe.settings.AppSettings
 import com.ibm.tic_tac_toe.settings.PlayerSettings
+import com.ibm.tic_tac_toe.settings.ThemePreference
 
 /**
  * Reads and writes [GameState], [ScoreBoard], and [PlayerSettings] to a
@@ -62,6 +64,20 @@ class GameStateRepository(private val store: KeyValueStore) {
         )
     }
 
+    fun saveAppSettings(settings: AppSettings) {
+        store.putBoolean(KEY_MUTED, settings.isMuted)
+        store.putString(KEY_THEME, settings.themePreference.name)
+    }
+
+    fun loadAppSettings(): AppSettings {
+        val defaults = AppSettings()
+        return AppSettings(
+            isMuted = store.getBoolean(KEY_MUTED, defaults.isMuted),
+            themePreference = store.getString(KEY_THEME, defaults.themePreference.name)
+                .let { name -> ThemePreference.entries.firstOrNull { it.name == name } ?: defaults.themePreference }
+        )
+    }
+
     private fun encodeBoard(board: List<Player?>): String =
         board.joinToString("") { (it?.toChar() ?: EMPTY_CELL).toString() }
 
@@ -89,5 +105,7 @@ class GameStateRepository(private val store: KeyValueStore) {
         private const val KEY_MY_NAME = "my_name"
         private const val KEY_OPPONENT_NAME = "opponent_name"
         private const val KEY_MY_SIDE = "my_side"
+        private const val KEY_MUTED = "muted"
+        private const val KEY_THEME = "theme_preference"
     }
 }
